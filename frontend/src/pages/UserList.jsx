@@ -5,12 +5,17 @@ function UserList() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filter, setFilter] = useState('todos');
 
   const fetchUsers = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_URL}/users`);
+      let url = `${API_URL}/users`;
+      if (filter !== 'todos') {
+        url += `?status=${filter}`;
+      }
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Falha ao buscar usuários');
       }
@@ -25,7 +30,7 @@ function UserList() {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [filter]);
 
   const handleInactivate = async (id) => {
     try {
@@ -50,6 +55,21 @@ function UserList() {
       <div className="card-header">
         <h2>Usuários do Sistema</h2>
         <p>Listagem de todos os usuários cadastrados.</p>
+      </div>
+
+      <div className="filter-container">
+        <label htmlFor="status-filter">Filtrar por Status:</label>
+        <div className="select-wrapper">
+          <select
+            id="status-filter"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          >
+            <option value="todos">Todos</option>
+            <option value="ativo">Ativos</option>
+            <option value="inativo">Inativos</option>
+          </select>
+        </div>
       </div>
 
       {error && (
