@@ -120,3 +120,11 @@ Todo o código gerado foi revisado, adaptado e validado manualmente antes da int
 ## Considerações
 
 O foco desta implementação foi atender integralmente aos requisitos obrigatórios do desafio, priorizando organização do código, separação de responsabilidades, simplicidade, legibilidade e boas práticas de desenvolvimento.
+
+## Entrega do case
+
+Esta branch representa a entrega final da implementação, contendo:
+- API REST para gerenciamento de usuários;
+- Interface web de consumo;
+- Testes automatizados;
+- Análise e correção do código legado.
