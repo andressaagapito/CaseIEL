@@ -6,10 +6,12 @@ function UserList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('todos');
+  const [actionMessage, setActionMessage] = useState({ type: '', text: '' });
 
   const fetchUsers = async () => {
     setLoading(true);
     setError(null);
+    setActionMessage({ type: '', text: '' });
     try {
       let url = `${API_URL}/users`;
       if (filter !== 'todos') {
@@ -33,6 +35,10 @@ function UserList() {
   }, [filter]);
 
   const handleInactivate = async (id) => {
+    if (!window.confirm('Tem certeza que deseja inativar este usuário?')) {
+      return;
+    }
+    setActionMessage({ type: '', text: '' });
     try {
       const response = await fetch(`${API_URL}/users/${id}/inactivate`, {
         method: 'PATCH',
@@ -45,8 +51,9 @@ function UserList() {
       setUsers(users.map(user => 
         user.id === id ? { ...user, status: 'inativo' } : user
       ));
+      setActionMessage({ type: 'success', text: 'Usuário inativado com sucesso!' });
     } catch (err) {
-      alert(err.message);
+      setActionMessage({ type: 'error', text: err.message });
     }
   };
 
@@ -71,6 +78,12 @@ function UserList() {
           </select>
         </div>
       </div>
+
+      {actionMessage.text && (
+        <div className={`alert alert-${actionMessage.type}`}>
+          {actionMessage.text}
+        </div>
+      )}
 
       {error && (
         <div className="alert alert-error">
