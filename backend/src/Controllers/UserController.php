@@ -43,7 +43,8 @@ class UserController
     public function findAll(): void
     {
         try {
-            $users = $this->service->findAll();
+            $status = $_GET['status'] ?? null;
+            $users = $this->service->findAll($status);
             
             $users = array_map(function ($user) {
                 unset($user['password']);
@@ -52,6 +53,9 @@ class UserController
 
             http_response_code(200);
             echo json_encode($users);
+        } catch (InvalidArgumentException $e) {
+            http_response_code(400);
+            echo json_encode(['error' => $e->getMessage()]);
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Erro interno do servidor.']);

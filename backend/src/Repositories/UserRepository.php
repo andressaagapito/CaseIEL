@@ -47,11 +47,17 @@ class UserRepository
         return $result ?: null;
     }
 
-    public function findAll(): array
+    public function findAll(?string $status = null): array
     {
-        $query = "SELECT * FROM users";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
+        if ($status) {
+            $query = "SELECT * FROM users WHERE status = :status";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([':status' => $status]);
+        } else {
+            $query = "SELECT * FROM users";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+        }
         
         return $stmt->fetchAll();
     }
