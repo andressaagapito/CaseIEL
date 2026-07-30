@@ -75,7 +75,7 @@ Siga os passos abaixo para rodar a aplicação localmente:
 ### 1. Clonar o projeto
 
 ```bash
-git clone <url-do-repositorio>
+git clone <[url-do-repositorio]https://github.com/andressaagapito/CaseIEL.git>
 cd <nome-da-pasta-do-projeto>
 ```
 
