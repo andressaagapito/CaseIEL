@@ -42,9 +42,13 @@ class UserService
         return $this->repository->findByEmail($email);
     }
 
-    public function findAll(): array
+    public function findAll(?string $status = null): array
     {
-        return $this->repository->findAll();
+        if ($status !== null && !in_array($status, ['ativo', 'inativo'])) {
+            throw new InvalidArgumentException("O status informado para o filtro é inválido. Utilize 'ativo' ou 'inativo'.");
+        }
+        
+        return $this->repository->findAll($status);
     }
 
     public function updateStatus(int $id, string $status): bool
