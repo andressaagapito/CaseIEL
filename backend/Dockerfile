@@ -20,10 +20,9 @@ RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor
     && apt-get update \
     && ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 unixodbc unixodbc-dev
 
-# Instalar extensões PHP via pecl e habilitá-las
-RUN pecl install sqlsrv pdo_sqlsrv \
-    && docker-php-ext-enable sqlsrv pdo_sqlsrv \
-    && docker-php-ext-install zip
+# Extensões SQL Server para PHP 8.2
+RUN pecl install sqlsrv-5.12.0 pdo_sqlsrv-5.12.0 \
+    && docker-php-ext-enable sqlsrv pdo_sqlsrv
 
 # Instalar o Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
