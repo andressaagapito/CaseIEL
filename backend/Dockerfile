@@ -1,40 +1,47 @@
-FROM php:8.2-cli-bookworm
+FROM php:8.2-apache
 
-# Instalar dependências básicas exigidas
+# Habilitar o mod_rewrite do Apache
+RUN a2enmod rewrite
+
+# Instalar dependências básicas
 RUN apt-get update && apt-get install -y \
+    gnupg2 \
+    apt-transport-https \
     curl \
-    gnupg \
-    unzip \
     git \
-    zip \
+    unzip \
     libzip-dev \
-    unixodbc \
-    unixodbc-dev
+    zip
 
-# Adicionar repositório oficial da Microsoft explicitamente para Debian 12
+# Instalar repositório oficial Microsoft e dependências do SQL Server
 RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg \
-    && curl -fsSL https://packages.microsoft.com/config/debian/12/prod.list > /etc/apt/sources.list.d/mssql-release.list
+    && export DEBIAN_VERSION=$(. /etc/os-release && echo $VERSION_ID) \
+    && curl -fsSL https://packages.microsoft.com/config/debian/$DEBIAN_VERSION/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 unixodbc unixodbc-dev
 
-# Instalar Microsoft ODBC Driver 18 para SQL Server
-RUN apt-get update \
-    && ACCEPT_EULA=Y apt-get install -y msodbcsql18
-
-# Instalar extensões do PHP compatíveis com PHP 8.2 e habilitá-las
+# Instalar extensões PHP via pecl e habilitá-las
 RUN pecl install sqlsrv pdo_sqlsrv \
     && docker-php-ext-enable sqlsrv pdo_sqlsrv \
     && docker-php-ext-install zip
 
-# Instalar Composer
+# Instalar o Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Definir o diretório de trabalho esperado
-WORKDIR /var/www/html
+# Configurar o DocumentRoot do Apache para a pasta 'public'
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
-# Copiar código do backend
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Copiar os arquivos do backend para o container
+WORKDIR /var/www/html
 COPY . /var/www/html/
 
-# Executar instalação de dependências de produção
+# Instalar as dependências do Composer para produção (não dependendo do local)
 RUN composer install --no-dev --optimize-autoloader
 
-# Iniciar o servidor embutido do PHP usando a variável $PORT injetada pelo Render
-CMD php -S 0.0.0.0:$PORT -t public
+# Ajustar permissões (opcional, dependendo de como o app usa arquivos)
+RUN chown -R www-data:www-data /var/www/html
+
+EXPOSE 80
