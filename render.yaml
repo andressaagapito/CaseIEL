@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: caseiel-backend
+    env: docker
+    rootDir: backend
+    dockerfilePath: Dockerfile
