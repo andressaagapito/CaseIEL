@@ -19,12 +19,13 @@ class Database
             $password = getenv('DB_PASSWORD');
 
             try {
-                $dsn = "sqlsrv:Server={$host},{$port};Database={$dbName}";
+                $dsn = "sqlsrv:Server={$host},{$port};Database={$dbName};Encrypt=False";
                 self::$instance = new PDO($dsn, $username, $password);
                 self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 self::$instance->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             } catch (PDOException $e) {
-                die("Erro de conexão com o banco de dados: " . $e->getMessage());
+                error_log($e->getMessage());
+                die("Erro interno de conexão.");
             }
         }
 

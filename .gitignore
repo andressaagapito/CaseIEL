@@ -1,5 +1,6 @@
 /node_modules
-/vendor
+frontend/node_modules
+**/vendor/
 .env
 .DS_Store
 dist/

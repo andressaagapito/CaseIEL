@@ -75,7 +75,7 @@ Siga os passos abaixo para rodar a aplicação localmente:
 ### 1. Clonar o projeto
 
 ```bash
-git clone <[url-do-repositorio]https://github.com/andressaagapito/CaseIEL.git>
+git clone https://github.com/andressaagapito/CaseIEL.git
 cd <nome-da-pasta-do-projeto>
 ```
 
@@ -122,7 +122,7 @@ Após a inicialização, os serviços estarão disponíveis nos seguintes endere
 
 - **Frontend:** `http://localhost:<porta-do-frontend>` (padrão Vite: `http://localhost:5173`)
 - **Backend / API:** `http://localhost:<porta-da-api>` (padrão: `http://localhost:8000`)
-- **Documentação da API (Swagger/OpenAPI):** `<url-da-documentacao-caso-exista>`
+
 
 ## Endpoints
 
@@ -190,8 +190,7 @@ Foi implementado um teste automatizado para validação da regra de e-mail únic
 
 Para rodar os testes, utilize o comando:
 ```bash
-# <Comando-placeholder-para-executar-os-testes>
-# Exemplo: docker-compose exec php vendor/bin/phpunit
+# docker compose exec backend vendor/bin/phpunit
 ```
 
 ## Limitações
